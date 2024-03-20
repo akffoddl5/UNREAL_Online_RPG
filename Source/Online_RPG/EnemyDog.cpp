@@ -2,6 +2,7 @@
 
 
 #include "EnemyDog.h"
+#include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 #include "EnemyProjectile.h"
@@ -14,24 +15,33 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyAIController.h"
 #include "CMSpawnManager.h"
-
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
+#include "AIController.h"
+#include "GameFramework/Character.h"
+#include "NavFilters/NavigationQueryFilter.h"
+#include "AI/NavigationSystemBase.h"
 // Sets default values
 AEnemyDog::AEnemyDog()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	Health = MaxHealth;
+
 }
 
 // Called when the game starts or when spawned
 void AEnemyDog::BeginPlay()
 {
 	Super::BeginPlay();
+	SpawnLocation = this->GetActorLocation();
+	UE_LOG(LogTemp, Warning, TEXT("Monster Location = %s"), *FString::Printf(TEXT("%f / %f / %f"), this->GetActorLocation().X, this->GetActorLocation().Y, this->GetActorLocation().Z));
 	Health = MaxHealth;
 	RangeCheck();
 	//AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
 
-	
+
 }
 
 // Called every frame
@@ -59,12 +69,13 @@ float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	AEnemyAIController* OwnerController = Cast<AEnemyAIController>(this->GetController());
-	OwnerController->SetPlayer(Cast<APawn>(DamageCauser));
+	if(OwnerController)
+		OwnerController->SetPlayer(Cast<APawn>(DamageCauser));
 	if (IsDead) return ActualDamage;
 
 	if (Health - ActualDamage <= 0)
 	{
-		Dead();
+		OnDeath();
 		return ActualDamage;
 	}
 
@@ -112,9 +123,12 @@ bool AEnemyDog::RangeCheck()
 	return false;
 
 }
-void AEnemyDog::Dead()
+void AEnemyDog::OnDeath()
 {
 	if (IsDead) return;
+	FVector NewSpawnLocation = SpawnLocation + FVector(100, 0, 0);
+	//ACMSpawnManager::GetInstance()->RespawnActor(SpawnLocation, 5.0f);
+
 	Health = 0;
 	IsDead = true;
 	FRotator MyRotator(0.0f, 0.0f, 190.0f);
@@ -128,23 +142,44 @@ void AEnemyDog::Dead()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
+	ACMSpawnManager* SpawnManager = Cast<ACMSpawnManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACMSpawnManager::StaticClass()));
+	if (SpawnManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Action Spawn"));
+
+		SpawnManager->SpawnEnemyDog(GetActorLocation(), RespawnTime);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Error"));
+
+	}
+	Destroy();
 	
-	//SpawnSelf();
-	this->SetLifeSpan(5.0f);
 }
 
-void AEnemyDog::SpawnSelf()
+void AEnemyDog::Idle()
 {
-	/*SpawnLocation = this->GetActorLocation();
-	SpawnRotation = { 0.f,0.f,0.f };
-	
-	SpawnLocation.X += 5;*/
-	//if (EnemySelf)
-	//{
-	//	ACMSpawnManager* Q = ACMSpawnManager::GetInstance();
 
-	//	Q->SpawnActor(EnemySelf, SpawnLocation, SpawnRotation);
-
-	//	//ACMSpawnManager::SpawnActor(GetWorld(), EnemySelf, SpawnLocation, SpawnRotation);
-	//}
 }
+bool AEnemyDog::CanMoveToPosition(FVector TargetLocation)
+{
+	// 네비게이션 시스템을 가져옵니다.
+	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	if (!NavSys) return false;
+
+	// 네비게이션 데이터를 가져옵니다.
+	const ANavigationData* NavData = NavSys->GetDefaultNavDataInstance();
+
+	// 네비게이션 쿼리 필터를 생성합니다.
+	FSharedConstNavQueryFilter QueryFilter = UNavigationQueryFilter::GetQueryFilter(*NavData, this, UNavigationQueryFilter::StaticClass());
+
+	// 경로를 찾습니다.
+	FPathFindingQuery Query(this, *NavData, GetActorLocation(), TargetLocation, QueryFilter);
+	FPathFindingResult Result = NavSys->FindPathSync(Query);
+
+	// 결과의 성공 여부와 경로의 유효성을 검증합니다.
+	UE_LOG(LogTemp, Warning, TEXT("CanMoveToPosition:Result.IsSuccessful() =  %s /  Result.Path.IsValid() =  %s  / !Result.Path->GetPathPoints().IsEmpty() = %s"), Result.IsSuccessful(), Result.Path.IsValid(), !Result.Path->GetPathPoints().IsEmpty());
+
+	return Result.IsSuccessful() && Result.Path.IsValid() && !Result.Path->GetPathPoints().IsEmpty();
+}
+

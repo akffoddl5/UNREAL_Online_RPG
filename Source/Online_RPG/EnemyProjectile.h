@@ -17,7 +17,7 @@ public:
 
 	UFUNCTION()
 	void OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor);
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
