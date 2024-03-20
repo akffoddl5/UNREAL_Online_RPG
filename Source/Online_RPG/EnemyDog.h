@@ -15,25 +15,17 @@ class ONLINE_RPG_API AEnemyDog : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AEnemyDog();
-
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
-	void OnDeath();
-
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Attack();
 
-	void Idle();
-
-	bool CanMoveToPosition(FVector TargetLocation);
-
 protected:
 	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 public:	
+	// Called every frame
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	
@@ -41,9 +33,9 @@ public:
 	bool RangeCheck();
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "VALUE")
+	UPROPERTY(VisibleAnywhere)
 	FVector SpawnLocation;
-	UPROPERTY(VisibleAnywhere, Category = "VALUE")
+	UPROPERTY(VisibleAnywhere)
 	FRotator SpawnRotation;
 	UPROPERTY(VisibleAnywhere)
 	float Health;
@@ -68,14 +60,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 500;
-	UPROPERTY(EditAnywhere, Category = "Spawn")
-	float RespawnTime = 5.0f;
-
-	void Die();
-
+	
 	void SpawnDebugSphere(FVector Location, float Radius);
 	void SpawnProjectile();
+	void Dead();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Spawn")
-	TSubclassOf<AEnemyDog> EnemyDogClass;
 };

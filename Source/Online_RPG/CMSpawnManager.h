@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "TimerManager.h"
-#include "EnemyDog.h"
 #include "CMSpawnManager.generated.h"
 
 UCLASS()
@@ -16,12 +14,25 @@ class ONLINE_RPG_API ACMSpawnManager : public AActor
 public:
     ACMSpawnManager();
 
-    void SpawnEnemyDog(FVector Location, float Delay);
+    // 스폰 함수
+    AActor* SpawnActor(UClass* ActorClass, const FVector& Location, const FRotator& Rotation);
 
-protected:
-    virtual void BeginPlay() override;
+    // 소멸 함수
+    void DestroyActor(AActor* Actor);
 
-    UPROPERTY(EditAnywhere, Category = "Spawning")
-    TSubclassOf<class AEnemyDog> EnemyDogClass;
+    // 싱글톤 인스턴스 반환
+    static ACMSpawnManager* GetInstance();
+
+    
+
+
+private:
+    // 생성된 엑터를 관리할 배열
+    UPROPERTY(EditAnywhere)
+    TArray<AActor*> SpawnedActors;
+    UPROPERTY(EditAnywhere)
+    TSubclassOf<class AEnemyDog> EnemyDog;
+    // 싱글톤 인스턴스
+    static ACMSpawnManager* Instance;
 
 };

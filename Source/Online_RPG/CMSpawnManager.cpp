@@ -1,37 +1,43 @@
-// Fill out y
-//our copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
 #include "CMSpawnManager.h"
-#include "Engine/World.h"
 #include "TimerManager.h"
-#include "Net/UnrealNetwork.h"
-#include "EnemyDog.h"
 // Sets default values
+ACMSpawnManager* ACMSpawnManager::Instance = nullptr;
 
 ACMSpawnManager::ACMSpawnManager()
 {
-    PrimaryActorTick.bCanEverTick = false;
-    bReplicates = true;
-}
-
-void ACMSpawnManager::BeginPlay()
-{
+    // 생성자에서 인스턴스 초기화
+    Instance = this;
+    PrimaryActorTick.bCanEverTick = true;
 
 }
 
-void ACMSpawnManager::SpawnEnemyDog(FVector Location, float Delay)
+AActor* ACMSpawnManager::SpawnActor(UClass* ActorClass, const FVector& Location, const FRotator& Rotation)
 {
-    if (HasAuthority()) 
+    AActor* NewActor = GetWorld()->SpawnActor<AActor>(ActorClass, Location, Rotation);
+    return NewActor;
+}
+
+
+void ACMSpawnManager::DestroyActor(AActor* Actor)
+{
+    if (!Actor)
     {
-        FTimerHandle TimerHandle;
-        GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([this, Location]()
-            {
-                AEnemyDog* SpawnedEnemyDog = GetWorld()->SpawnActor<AEnemyDog>(EnemyDogClass, Location, FRotator::ZeroRotator);
-                if (SpawnedEnemyDog)
-                {
-                    // Additional setup for the spawned enemy dog can be done here.
-                }
-            }), Delay, false);
+        UE_LOG(LogTemp, Error, TEXT("Actor is null!"));
+        return;
     }
-    
+    // 엑터 소멸
+    Actor->Destroy();
+
+    // 배열에서 제거
+    SpawnedActors.Remove(Actor);
 }
+
+ACMSpawnManager* ACMSpawnManager::GetInstance()
+{
+    return Instance;
+}
+
 
