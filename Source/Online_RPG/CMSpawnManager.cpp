@@ -22,6 +22,7 @@ void ACMSpawnManager::SpawnEnemyDog(FVector Location, float Delay)
 {
     if (HasAuthority()) 
     {
+<<<<<<< HEAD
         FTimerHandle TimerHandle;
         GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([this, Location]()
             {
@@ -31,6 +32,10 @@ void ACMSpawnManager::SpawnEnemyDog(FVector Location, float Delay)
                     // Additional setup for the spawned enemy dog can be done here.
                 }
             }), Delay, false);
+=======
+        ////UE_LOG(LogTemp, Error, TEXT("Actor is null!"));
+        return;
+>>>>>>> main
     }
     
 }

@@ -80,7 +80,7 @@ float AEnemyDog::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	}
 
 	Health -= ActualDamage;
-	UE_LOG(LogTemp, Display, TEXT("Actor took damage: %f Heath = %f"), ActualDamage, Health);
+	//UE_LOG(LogTemp, Display, TEXT("Actor took damage: %f Heath = %f"), ActualDamage, Health);
 	return ActualDamage;
 }
 
@@ -140,7 +140,7 @@ void AEnemyDog::OnDeath()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
+		//UE_LOG(LogTemp, Warning, TEXT("AEnemyAIController Is Nullptr"));
 	}
 	ACMSpawnManager* SpawnManager = Cast<ACMSpawnManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACMSpawnManager::StaticClass()));
 	if (SpawnManager)

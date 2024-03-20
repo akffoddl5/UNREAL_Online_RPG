@@ -18,6 +18,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinClick();
 
+	FTimerHandle ButtonCoolTimer;
+	bool bIsButtonCool;
+	UFUNCTION()
+	bool NeedSetButtonCool();
+	UFUNCTION()
+	void StopButtonCool();
 
 	UFUNCTION(BlueprintCallable)
 	void LoginClick(FString _id, FString _pw);
@@ -42,4 +48,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetDestroy();
+
+	UFUNCTION(BlueprintCallable)
+	void DoLogout();
 };

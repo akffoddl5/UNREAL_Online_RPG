@@ -95,12 +95,12 @@ void APickUpItem::EndFocus()
 	IItemInteractionInterface::EndFocus();
 }
 
-void APickUpItem::Interact(AItemC* PlayerCharacter)
+void APickUpItem::Interact(APlayerCharacter* PlayerCharacter)
 {
 	if (PlayerCharacter) PickUpItem(PlayerCharacter);
 }
 
-void APickUpItem::PickUpItem(const AItemC* Taker)
+void APickUpItem::PickUpItem(const APlayerCharacter* Taker)
 {
 	if (IsPendingKillPending()) return;
 
@@ -121,7 +121,7 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 			Destroy();
 			break;
 		default:
-			UE_LOG(LogTemp,Error,TEXT("디폴트 실행"))
+			//UE_LOG(LogTemp,Error,TEXT("디폴트 실행"))
 			;
 		}
 	}
@@ -129,6 +129,12 @@ void APickUpItem::PickUpItem(const AItemC* Taker)
 
 void APickUpItem::InitializeDropItem(UItemBase* ItemToDrop, const int32 Quantity)
 {
+	InstanceItemData = ItemToDrop;
+	InstanceItemData->SetQuantity(Quantity);
+	InstanceItemData->OwningInventory = nullptr;
+	InstanceMesh->SetStaticMesh(ItemToDrop->BaseItemAssetData.Mesh);
+
+	UpdateItemInteractionData();
 }
 
 void APickUpItem::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

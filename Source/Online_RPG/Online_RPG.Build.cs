@@ -8,6 +8,7 @@ public class Online_RPG : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+<<<<<<< HEAD
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","Networking",  "Sockets" , "UMG", "HTTP", "Json", "JsonUtilities", "GameplayTasks", "AIModule", "LevelSequence", "MovieScene", "NavigationSystem" });
 		
 		//PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "../../ThirdParty/connector/include/mysql"));
@@ -18,4 +19,18 @@ public class Online_RPG : ModuleRules
          // MySQL Connector/C++ 헤더 파일 경로
         
 	}
+=======
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","Networking",  "Sockets" , "UMG", "HTTP", "Json", "JsonUtilities", "GameplayTasks", "AIModule", "LevelSequence", "MovieScene", "OnlineSubsystem", "OnlineSubsystemUtils" });
+
+        //DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
+
+        //PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "../../ThirdParty/connector/include/mysql"));
+        //PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../../ThirdParty/connector/lib64", "YourLibrary.lib"));
+        //PublicDelayLoadDLLs.Add("YourLibrary.dll");
+        //RuntimeDependencies.Add(Path.Combine(ModuleDirectory, "../../ThirdParty/connector/lib64", "mysqlcppconn-9-vs14.dll"));
+
+        // MySQL Connector/C++ 헤더 파일 경로
+
+    }
+>>>>>>> main
 }
