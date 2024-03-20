@@ -3,106 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameDelegates.h"
-#include "ItemStruct.h"
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
-
-
-struct FItemData;
-class UItemBase;
-class IItemInteractionInterface;
-class AInventoryHUD;
-class UInventoryComponent;
-
-USTRUCT()
-struct FInteractingData
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	AActor* CurrentInteracting;
-
-	FInteractingData():CurrentInteracting(nullptr){}
-	
-};
-
-
-
 
 UCLASS()
 class ONLINE_RPG_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
-public: // 디폴트
+
+public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-protected: // 디폴트
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-public:
-
-	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory;}
-	
-	UPROPERTY()
-	AInventoryHUD* HUD;
-
-	UPROPERTY(VisibleAnywhere,Category = "Character | Interaction")
-	TScriptInterface<IItemInteractionInterface> InteractionTarget;
-	
-	float InteractionDistance = 300.0f;
-
-	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
-	UInventoryComponent* PlayerInventory;
-
-	UPROPERTY(EditAnywhere, Category ="Character | Database")
-	UDataTable* ItemDataTable;
-	
-	
-	FInteractingData InteractionData;
-	void FoundNoInteract();
-	void FoundInteract(AActor* NewInteract);
-	void BeginInteract();
-	void Interact();
-	void EndInteract();
-	void OpenInventory();
-	void UpdateInteractionWidget() const;
-	void DropItem(UItemBase* ItemToDrop,const int32 QuantityToDrop);
-	void CheckInteraction();
-	UItemBase* MakeItemBase(const FItemData* ItemData,int32 Quantity);
-	
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// 인벤토리 영역 인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역인벤토리 영역 ////
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-	
-public:
-	
-	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Owner() override;
-	// UPROPERTY(ReplicatedUsing=OnRep_Possessed)
-	// bool bIsPossessed = false;
-	// UFUNCTION()
-	// void OnRep_Possessed();
 
 	/** ??????? ???占쏙옙?????? */
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -173,11 +87,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "State")
 	AGun* MyGun;
 
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE float GetCoolTime() const { return CoolTime; }
+	
+
 
 protected:
-
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	/** ?占쏙옙?????? ??? ???. ????? ???????. ?? ???? ???? ?? ?????? 占쏙옙?????? ??? ??????.*/
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
@@ -200,7 +115,7 @@ protected:
 
 	/** */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	float CoolTime = 10.f;
+	float CoolTime;
 
 
 	UPROPERTY(ReplicatedUsing = OnRep_IsAttacking)
@@ -224,23 +139,13 @@ protected:
 
 	void AttackCoolTime();
 
-	UFUNCTION(BlueprintCallable)
-	float GetCountDown();
-
 	/** ?????? ??????? ???? ???*/
 	UFUNCTION(BlueprintCallable)
 	void HandleFire();
 
-	UPROPERTY(Replicated)
+	/** ???? ????? ??? ??? ?????????? ???? ???*/
 	FTimerHandle FiringTimer;
 
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentCountdown_Rep)
-	int CurrentCountdown_Rep;
-	float CurrentCountdown_Temp;
-	float CurrentCountdown;
-
-	UFUNCTION()
-	void OnRep_CurrentCountdown_Rep();
 
 	/** ???? ?????*/
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
@@ -314,15 +219,13 @@ protected:
 	//?????????
 	UPROPERTY(ReplicatedUsing = OnRep_IsUpperSlash)
 	bool bIsUpperSlash;
-	UPROPERTY(Replicated)
-	bool bIsUpperSlashCooldown;
 	float UpperSlash_Rate = 2.0f;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void StopUpperSlash();
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE bool GetIsUpperSlash() const { return bIsUpperSlash; }
+	FORCEINLINE bool GetIsUpperSlash() const;
 
 	UFUNCTION()
 	void OnRep_IsUpperSlash();
@@ -330,6 +233,15 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void HandleUpperSlash();
 
+
+
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 

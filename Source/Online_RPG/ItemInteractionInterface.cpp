@@ -3,8 +3,6 @@
 
 #include "ItemInteractionInterface.h"
 
-#include "PlayerCharacter.h"
-
 // Add default functionality here for any IItemInteractionInterface functions that are not pure virtual.
 
 void IItemInteractionInterface::BeginFocus()
@@ -19,7 +17,7 @@ void IItemInteractionInterface::BeginInteract()
 {
 }
 
-void IItemInteractionInterface::Interact(APlayerCharacter* PlayerCharacter)
+void IItemInteractionInterface::Interact(AItemC* PlayerCharacter)
 {
 }
 

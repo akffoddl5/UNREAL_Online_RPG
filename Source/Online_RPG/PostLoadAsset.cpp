@@ -3,10 +3,9 @@
 
 #include "PostLoadAsset.h"
 
-#include "WorldPartition/ContentBundle/ContentBundleLog.h"
-
 FPrimaryAssetId UPostLoadAsset::GetPrimaryAssetId() const
 {
-	//UE_LOG(LogTemp, Log, TEXT(" 77777777777777   init 7777777778777777777 "));
+	UE_LOG(LogTemp, Error, TEXT("8888888888888888899900078 : %s"), *GetFName().ToString());
 	return FPrimaryAssetId("PostLoadAsset", GetFName());
+
 }

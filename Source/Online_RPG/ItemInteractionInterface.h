@@ -6,7 +6,7 @@
 #include "UObject/Interface.h"
 #include "ItemInteractionInterface.generated.h"
 
-class APlayerCharacter;
+class AItemC;
 
 UENUM()
 enum class EInteractionType:uint8
@@ -25,7 +25,10 @@ struct FInteractionData
 	Name(FText::GetEmpty()),
 	Action(FText::GetEmpty()),
 	Quantity(0),
-	InteractionDuration(0.0f){}
+	InteractionDuration(0.0f)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("생성자 %d"),Quantity)
+	}
 
 	UPROPERTY(EditInstanceOnly, Category ="ItemData")
 	EInteractionType InteractionType;
@@ -66,7 +69,7 @@ public:
 	virtual void BeginFocus();
 	virtual void EndFocus();
 	virtual void BeginInteract();
-	virtual void Interact(APlayerCharacter* PlayerCharacter);
+	virtual void Interact(AItemC* PlayerCharacter);
 	virtual void EndInteract();
 
 

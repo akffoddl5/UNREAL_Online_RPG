@@ -6,25 +6,18 @@
 #include "GameFramework/HUD.h"
 #include "InventoryHUD.generated.h"
 
-class UInventoryPanel;
 class UInventoryMainMenu;
 struct FInteractionData;
 class UItemInteractWidget;
 /**
  * 
  */
-
-DECLARE_MULTICAST_DELEGATE(FInitializeWidget);
-
 UCLASS()
 class ONLINE_RPG_API AInventoryHUD : public AHUD
 {
 	GENERATED_BODY()
 
 public:
-	
-	FInitializeWidget InitializeWidget;
-	
 	UPROPERTY(EditDefaultsOnly,Category = "Widgets")
 	TSubclassOf<UItemInteractWidget> ItemInteractionWidgetClass;
 
@@ -36,9 +29,6 @@ public:
 
 	UPROPERTY()
 	UInventoryMainMenu* InventoryMainMenuWidget;
-
-	UPROPERTY()
-	UInventoryPanel* InventoryPanel;
 	
 	bool bIsInventoryOpen = false;
 

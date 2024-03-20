@@ -95,9 +95,6 @@ public:
 
 	void CreateWidget_OX(bool bIsSuccess);
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> Player_Widget;
-
 
 	//======================================로그인 후 세팅 값======================================
 	//ID
@@ -116,12 +113,6 @@ public:
 	void GetSpawnData();
 	void GetSpawnData_CallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void Spawn_Init();
-	void SetSpawnData(FVector _Location, FRotator _Rotation, FString _Login_ID);
-	void SetSpawnData_Callback(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void UpdateSpawnData();
-	void InsertSpawnData();
-	void Callback_ForceExit(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	FString DocumentId;
 
 	class ULevelSequence* Level_Sequence;
 	class ULevelSequencePlayer* Player_Sequence;
@@ -140,18 +131,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void CallSpawn(int Player_Idx);
 	
-	TArray<TSharedPtr<FJsonValue>> ValuesArray;
 	
-	bool CreateSession(ULocalPlayer* Player, int32 NumPublicConnections, bool bIsLAN);
-	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
-	/*void FindSessions(APlayerController* PlayerController, bool bIsLAN, int32 MaxSearchResults);
-	void OnFindSessionsComplete(bool bWasSuccessful);*/
+	
+	
 	
 	
 private:
 	//FSocket* Socket;
 	// 기타 필요한 변수 및 함수들
-	//TSharedPtr<FOnlineSessionSearch> SessionSearch;
 };
 
 

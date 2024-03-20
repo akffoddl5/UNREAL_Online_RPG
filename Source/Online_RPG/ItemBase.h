@@ -6,9 +6,8 @@
 #include "ItemStruct.h"
 #include "ItemBase.generated.h"
 
-class APlayerCharacter;
 class UInventoryComponent;
-class APlayerCharacter;
+class AItemC;
 /**
  * 
  */
@@ -50,7 +49,7 @@ public:
 	
 	void SetQuantity(const int32 NewQuantity);
 	bool IsFullItemStack() const {return BaseItemQuantity == BaseItemNumericData.MaxStackSize;}
-	void Use(APlayerCharacter* UsingCharacter);
+	void Use(AItemC* UsingCharacter);
 	
 	
 protected:
